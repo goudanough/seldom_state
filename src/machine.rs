@@ -17,9 +17,9 @@ use crate::{
     trigger::{IntoTrigger, TriggerOut},
 };
 
-pub(crate) fn machine_plugin(app: &mut App) {
-    app.add_systems(PostUpdate, transition.in_set(StateSet::Transition));
-}
+// pub(crate) fn machine_plugin(app: &mut App) {
+//     app.add_systems(PostUpdate, transition.in_set(StateSet::Transition));
+// }
 
 /// Performs a transition. We have a trait for this so we can erase [`TransitionImpl`]'s generics.
 trait Transition: Debug + Send + Sync + 'static {

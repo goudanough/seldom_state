@@ -8,25 +8,52 @@ pub mod set;
 mod state;
 pub mod trigger;
 
-use machine::machine_plugin;
+use bevy::{ecs::schedule::ScheduleLabel, utils::intern::Interned};
+use machine::{machine_plugin, transition};
 use prelude::*;
-use trigger::trigger_plugin;
+use set::StateSet;
+use trigger::{remove_done_markers, trigger_plugin};
 
 /// Add to your app to use this crate
-#[derive(Debug, Default)]
-pub struct StateMachinePlugin;
+#[derive(Debug)]
+pub struct StateMachinePlugin {
+    schedule: Interned<dyn ScheduleLabel>,
+}
+
+impl StateMachinePlugin {
+    fn in_schedule(mut self, schedule: impl ScheduleLabel) -> Self {
+        self.schedule = schedule.intern();
+        self
+    }
+}
+
+impl Default for StateMachinePlugin {
+    fn default() -> Self {
+        StateMachinePlugin {
+            schedule: PostUpdate.intern(),
+        }
+    }
+}
 
 impl Plugin for StateMachinePlugin {
     fn build(&self, app: &mut App) {
-        app.fn_plugin(state_machine_plugin);
+        app.add_systems(PostUpdate, transition.in_set(StateSet::Transition));
+        app.configure_sets(
+            self.schedule,
+            StateSet::RemoveDoneMarkers.after(StateSet::Transition),
+        )
+        .add_systems(
+            self.schedule,
+            remove_done_markers.in_set(StateSet::RemoveDoneMarkers),
+        );
     }
 }
 
 /// Function called by [`StateMachinePlugin`]. You may instead call it directly or use
 /// `seldom_fn_plugin`, which is another crate I maintain.
-pub fn state_machine_plugin(app: &mut App) {
-    app.fn_plugin(machine_plugin).fn_plugin(trigger_plugin);
-}
+// pub fn state_machine_plugin(app: &mut App) {
+//     app.fn_plugin(machine_plugin).fn_plugin(trigger_plugin);
+// }
 
 /// Module for convenient imports. Use with `use seldom_state::prelude::*;`.
 pub mod prelude {
@@ -48,7 +75,7 @@ pub mod prelude {
     pub use crate::{
         machine::StateMachine,
         state::{AnyState, EntityState},
-        state_machine_plugin,
+        // state_machine_plugin,
         trigger::{always, done, on_event, Done, IntoTrigger, Never, Trigger},
         StateMachinePlugin,
     };

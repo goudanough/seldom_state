@@ -19,16 +19,16 @@ use std::{convert::Infallible, fmt::Debug};
 
 use crate::{prelude::*, set::StateSet};
 
-pub(crate) fn trigger_plugin(app: &mut App) {
-    app.configure_sets(
-        PostUpdate,
-        StateSet::RemoveDoneMarkers.after(StateSet::Transition),
-    )
-    .add_systems(
-        PostUpdate,
-        remove_done_markers.in_set(StateSet::RemoveDoneMarkers),
-    );
-}
+// pub(crate) fn trigger_plugin(app: &mut App) {
+//     app.configure_sets(
+//         PostUpdate,
+//         StateSet::RemoveDoneMarkers.after(StateSet::Transition),
+//     )
+//     .add_systems(
+//         PostUpdate,
+//         remove_done_markers.in_set(StateSet::RemoveDoneMarkers),
+//     );
+// }
 
 /// Wrapper for [`core::convert::Infallible`]. Use for [`Trigger::Err`] if the trigger is
 /// infallible.
