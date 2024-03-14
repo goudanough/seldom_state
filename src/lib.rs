@@ -9,10 +9,10 @@ mod state;
 pub mod trigger;
 
 use bevy::{ecs::schedule::ScheduleLabel, utils::intern::Interned};
-use machine::{machine_plugin, transition};
+use machine::transition;
 use prelude::*;
 use set::StateSet;
-use trigger::{remove_done_markers, trigger_plugin};
+use trigger::remove_done_markers;
 
 /// Add to your app to use this crate
 #[derive(Debug)]
@@ -21,7 +21,8 @@ pub struct StateMachinePlugin {
 }
 
 impl StateMachinePlugin {
-    fn in_schedule(mut self, schedule: impl ScheduleLabel) -> Self {
+    /// Determines what schedule the state machine should update in
+    pub fn in_schedule(mut self, schedule: impl ScheduleLabel) -> Self {
         self.schedule = schedule.intern();
         self
     }
@@ -60,7 +61,6 @@ pub mod prelude {
     pub(crate) use bevy::prelude::*;
     #[cfg(feature = "leafwing_input")]
     pub(crate) use leafwing_input_manager::prelude::*;
-    pub(crate) use seldom_fn_plugin::FnPluginExt;
 
     #[cfg(feature = "leafwing_input")]
     pub use crate::trigger::{

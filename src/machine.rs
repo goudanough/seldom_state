@@ -12,7 +12,6 @@ use bevy::{
 
 use crate::{
     prelude::*,
-    set::StateSet,
     state::{Insert, OnEvent},
     trigger::{IntoTrigger, TriggerOut},
 };

@@ -17,7 +17,7 @@ pub use input::{
 
 use std::{convert::Infallible, fmt::Debug};
 
-use crate::{prelude::*, set::StateSet};
+use crate::prelude::*;
 
 // pub(crate) fn trigger_plugin(app: &mut App) {
 //     app.configure_sets(
