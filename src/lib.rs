@@ -18,6 +18,7 @@ use trigger::remove_done_markers;
 #[derive(Debug)]
 pub struct StateMachinePlugin {
     schedule: Interned<dyn ScheduleLabel>,
+    system_set: Option<Interned<dyn SystemSet>>,
 }
 
 impl StateMachinePlugin {
@@ -26,12 +27,19 @@ impl StateMachinePlugin {
         self.schedule = schedule.intern();
         self
     }
+
+    /// Determines what [`SystemSet`] the state machine should update in
+    pub fn in_set(mut self, set: impl SystemSet) -> Self {
+        self.system_set = Some(set.intern());
+        self
+    }
 }
 
 impl Default for StateMachinePlugin {
     fn default() -> Self {
         StateMachinePlugin {
             schedule: PostUpdate.intern(),
+            system_set: None,
         }
     }
 }
@@ -47,6 +55,12 @@ impl Plugin for StateMachinePlugin {
             self.schedule,
             remove_done_markers.in_set(StateSet::RemoveDoneMarkers),
         );
+        if let Some(sys_set) = self.system_set {
+            app.configure_sets(
+                self.schedule,
+                (StateSet::RemoveDoneMarkers, StateSet::Transition).in_set(sys_set),
+            );
+        }
     }
 }
 
