@@ -124,7 +124,7 @@ impl StateMetadata {
 /// State machine component. Entities with this component will have components (the states) added
 /// and removed based on the transitions that you add. Build one with `StateMachine::default`,
 /// `StateMachine::trans`, and other methods.
-#[derive(Component, Clone)]
+#[derive(Component)]
 pub struct StateMachine {
     states: HashMap<TypeId, StateMetadata>,
     /// Each transition and the state it should apply in (or [`AnyState`]). We store the transitions
