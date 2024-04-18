@@ -38,7 +38,7 @@ impl Default for StateMachinePlugin {
 
 impl Plugin for StateMachinePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostUpdate, transition.in_set(StateSet::Transition));
+        app.add_systems(self.schedule, transition.in_set(StateSet::Transition));
         app.configure_sets(
             self.schedule,
             StateSet::RemoveDoneMarkers.after(StateSet::Transition),
